@@ -1,5 +1,5 @@
 {
-  "name": "@messenger/lib.express-cassandra",
+  "name": "@halonext/nestjs-express-cassandra",
   "version": "7.0.0",
   "description": "Nest - modern, fast, powerful node.js web framework (@express-cassandra)",
   "author": {
