@@ -36,6 +36,6 @@ interface OrmOptions {
  * ExpressCassandra client options
  */
 export interface ExpressCassandraOptions {
-  clientOptions?: ClientOptions;
+  clientOptions: ClientOptions;
   ormOptions?: OrmOptions;
 }

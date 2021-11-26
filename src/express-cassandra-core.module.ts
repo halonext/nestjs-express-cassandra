@@ -30,7 +30,7 @@ export class ExpressCassandraCoreModule {
     private readonly options: ExpressCassandraModuleOptions,
   ) {}
 
-  static forRoot(options: ExpressCassandraModuleOptions = {}): DynamicModule {
+  static forRoot(options: ExpressCassandraModuleOptions): DynamicModule {
     const moduleOptions = {
       provide: EXPRESS_CASSANDRA_MODULE_OPTIONS,
       useValue: options,

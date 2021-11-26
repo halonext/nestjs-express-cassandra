@@ -8,7 +8,7 @@ import {
 
 @Module({})
 export class ExpressCassandraModule {
-  static forRoot(options?: ExpressCassandraModuleOptions): DynamicModule {
+  static forRoot(options: ExpressCassandraModuleOptions): DynamicModule {
     return {
       module: ExpressCassandraModule,
       imports: [ExpressCassandraCoreModule.forRoot(options)],
