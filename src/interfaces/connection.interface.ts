@@ -1,6 +1,7 @@
+import ExpressCassandraClient from '../express-cassandra-client';
 import { ExpressCassandraOptions } from './express-cassandra.interface';
 
-export interface Connection {
+export interface Connection extends ExpressCassandraClient {
   isConnected: boolean;
 }
 

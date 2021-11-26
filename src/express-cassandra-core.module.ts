@@ -6,16 +6,20 @@ import {
   Provider,
 } from '@nestjs/common';
 import { nanoid } from 'nanoid';
+import { defer, lastValueFrom, map } from 'rxjs';
 
 import {
   EXPRESS_CASSANDRA_MODULE_ID,
   EXPRESS_CASSANDRA_MODULE_OPTIONS,
 } from './constants';
 import { ExpressCassandraModule } from './express-cassandra.module';
+import ExpressCassandraClient from './express-cassandra-client';
+import { Connection } from './interfaces/connection.interface';
 import {
   ExpressCassandraModuleAsyncOptions,
   ExpressCassandraModuleOptions,
 } from './interfaces/module-options.interface';
+import getConnectionName from './utils/get-connection-name';
 
 @Module({})
 export class ExpressCassandraCoreModule {
@@ -32,10 +36,15 @@ export class ExpressCassandraCoreModule {
       useValue: options,
     };
 
+    const connectionProvider = {
+      provide: getConnectionName(options),
+      useFactory: async () => await this.createConnectionFactory(options),
+    };
+
     return {
       module: ExpressCassandraCoreModule,
-      providers: [moduleOptions],
-      exports: [],
+      providers: [connectionProvider, moduleOptions],
+      exports: [connectionProvider],
     };
   }
 
@@ -96,5 +105,16 @@ export class ExpressCassandraCoreModule {
         await optionsFactory.createExpressCassandraOptions(options.name),
       inject,
     };
+  }
+
+  private static async createConnectionFactory(
+    options: ExpressCassandraModuleOptions,
+  ): Promise<Connection> {
+    const { ...cassandraOptions } = options;
+    const connection = new ExpressCassandraClient(cassandraOptions);
+
+    return await lastValueFrom(
+      defer(() => connection.initAsync()).pipe(map(() => connection)),
+    );
   }
 }
