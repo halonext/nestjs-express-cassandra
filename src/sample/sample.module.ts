@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { ExpressCassandraCoreModule } from '../express-cassandra-core.module';
+import { ExpressCassandraModule } from '../express-cassandra.module';
 import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
-    ExpressCassandraCoreModule.forRoot({
+    ExpressCassandraModule.forRoot({
       clientOptions: {
         contactPoints: ['127.0.0.1'],
       },

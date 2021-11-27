@@ -1,5 +1,6 @@
 import {
   DynamicModule,
+  Global,
   Inject,
   Logger,
   Module,
@@ -19,8 +20,9 @@ import {
   ExpressCassandraModuleAsyncOptions,
   ExpressCassandraModuleOptions,
 } from './interfaces/module-options.interface';
-import getConnectionName from './utils/get-connection-name';
+import { getConnectionProviderName } from './utils/providers';
 
+@Global()
 @Module({})
 export class ExpressCassandraCoreModule {
   private readonly logger = new Logger(ExpressCassandraModule.name);
@@ -37,7 +39,7 @@ export class ExpressCassandraCoreModule {
     };
 
     const connectionProvider = {
-      provide: getConnectionName(options),
+      provide: getConnectionProviderName(options),
       useFactory: async () => await this.createConnectionFactory(options),
     };
 
