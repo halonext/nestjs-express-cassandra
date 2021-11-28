@@ -25,7 +25,7 @@ export class Repository<Entity> {
       const model = new this.model(entity);
       await model.saveAsync(options);
       return Object.assign(new this.target(), model.toJSON());
-    }).pipe(catchError((error) => of(error)));
+    }).pipe(catchError((error: Error) => of(error)));
   }
 
   find(
@@ -41,7 +41,7 @@ export class Repository<Entity> {
       map((entities) =>
         entities.map((e) => Object.assign(new this.target(), e)),
       ),
-      catchError((error) => of(error)),
+      catchError((error: Error) => of(error)),
     );
   }
 
@@ -55,6 +55,6 @@ export class Repository<Entity> {
         ...{ if_exists: true },
         ...options,
       }),
-    ).pipe(catchError((error) => of(error)));
+    ).pipe(catchError((error: Error) => of(error)));
   }
 }
