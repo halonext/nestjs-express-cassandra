@@ -1,14 +1,43 @@
-import { Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+} from '@nestjs/common';
 
-interface CreatePostResponse {
+import { PostEntity } from './entities/post.entity';
+import { PostsService } from './posts.service';
+
+export interface CreatePostDTO {
   title: string;
-  body: string;
+  content: string;
 }
 
 @Controller()
 export class PostsController {
+  constructor(private readonly posts: PostsService) {}
+
   @Post('/posts')
-  create(): CreatePostResponse {
-    return { title: 'Express Cassandra', body: 'A NestJS module' };
+  async create(@Body() { title, content }: CreatePostDTO): Promise<PostEntity> {
+    const result = await this.posts.create(title, content);
+
+    if (result instanceof Error) {
+      throw new BadRequestException('Could not save post', result.message);
+    }
+
+    return result;
+  }
+
+  @Get('/posts')
+  async list(@Query() query: Record<string, string>): Promise<PostEntity[]> {
+    const result = await this.posts.find(query);
+
+    if (result instanceof Error) {
+      throw new BadRequestException('Could not get posts', result.message);
+    }
+
+    return result;
   }
 }

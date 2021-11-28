@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Type } from '@nestjs/common';
 
 import Connection from '../connection';
 import {
@@ -6,16 +6,17 @@ import {
   ExtendedEntityOptions,
   FunctionType,
 } from '../interfaces/decorators.interface';
-import { BaseModel } from '../interfaces/orm.interface';
+import { BaseModel, BaseModelStatic } from '../interfaces/orm.interface';
+import { Repository } from '../repository';
 import { getEntityColumns, getEntityOptions } from './metadata';
 
-export async function loadModel<T>(
+export async function loadSchema<T>(
   connection: Connection,
   entity: FunctionType,
-): Promise<BaseModel<T>> {
+): Promise<BaseModelStatic<T>> {
   const schema = getSchema(entity);
   const modelName = schema.name || entity.name;
-  const model = connection.loadSchema(modelName, schema);
+  const model = connection.loadSchema<T>(modelName, schema);
 
   return new Promise((resolve, reject) => {
     model.syncDB((err) => {
@@ -45,4 +46,12 @@ export function getSchema(
   }
 
   return { ...options, fields };
+}
+
+export function createRepository<T>(
+  entity: Type<T>,
+  model: BaseModel<T>,
+  constructor = Repository,
+): Repository<T> {
+  return new constructor(model, entity);
 }

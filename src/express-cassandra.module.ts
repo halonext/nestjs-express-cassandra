@@ -1,8 +1,7 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Module, Type } from '@nestjs/common';
 
 import { DEFAULT_CONNECTION_NAME } from './constants';
 import { ExpressCassandraCoreModule } from './express-cassandra-core.module';
-import { FunctionType } from './interfaces/decorators.interface';
 import {
   ExpressCassandraModuleAsyncOptions,
   ExpressCassandraModuleOptions,
@@ -28,7 +27,7 @@ export class ExpressCassandraModule {
   }
 
   static forFeature(
-    entities: FunctionType[] = [],
+    entities: Type[] = [],
     connection = DEFAULT_CONNECTION_NAME,
   ): DynamicModule {
     const providers = createFeatureProviders(entities, connection);
