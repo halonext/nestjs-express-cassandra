@@ -1,3 +1,5 @@
+import { types } from 'cassandra-driver';
+
 export interface SaveOptions {
   ttl?: number;
   if_not_exist?: boolean;
@@ -17,6 +19,12 @@ export interface BaseModelStatic<T> {
     query: FindQuery<T>,
     options?: FindQueryOptions<T>,
   ): Promise<BaseModelStatic<T>[]>;
+
+  updateAsync(
+    query: FindQuery<T>,
+    updateValue: Partial<T>,
+    options?: UpdateOptions<T>,
+  ): Promise<types.ResultSet>;
 }
 
 export interface BaseModel<T> extends BaseModelStatic<T> {
@@ -25,14 +33,14 @@ export interface BaseModel<T> extends BaseModelStatic<T> {
   toJSON(): T;
 }
 
+export type FindQuery<Entity> = {
+  [KEY in keyof Entity]?: Entity[KEY] | CqlOperatorOptions<Entity[KEY]>;
+} & CqlPaginationOptions<Entity>;
+
 export interface FindQueryOptions<T> {
   select?: (string | keyof T)[];
   materialized_view?: string;
 }
-
-export type FindQuery<Entity> = {
-  [KEY in keyof Entity]?: Entity[KEY] | CqlOperatorOptions<Entity[KEY]>;
-} & CqlPaginationOptions<Entity>;
 
 export interface CqlPaginationOptions<Entity> {
   $orderby?: {
@@ -55,4 +63,14 @@ export interface CqlOperatorOptions<T> {
   $token?: T;
   $contains?: string;
   $contains_key?: string[];
+}
+
+export interface UpdateOptions<T> {
+  ttl?: number;
+  if_exists?: boolean;
+  conditions?: { [P in keyof T]?: T[P] };
+}
+
+export interface UpdateResult {
+  updated: number;
 }

@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 
@@ -19,6 +20,17 @@ export interface CreatePostDTO {
 export class PostsController {
   constructor(private readonly posts: PostsService) {}
 
+  @Get('/posts')
+  async list(@Query() query: Record<string, string>): Promise<PostEntity[]> {
+    const result = await this.posts.find(query);
+
+    if (result instanceof Error) {
+      throw new BadRequestException('Could not get posts', result.message);
+    }
+
+    return result;
+  }
+
   @Post('/posts')
   async create(@Body() { title, content }: CreatePostDTO): Promise<PostEntity> {
     const result = await this.posts.create(title, content);
@@ -30,14 +42,20 @@ export class PostsController {
     return result;
   }
 
-  @Get('/posts')
-  async list(@Query() query: Record<string, string>): Promise<PostEntity[]> {
-    const result = await this.posts.find(query);
+  @Put('/posts')
+  async update(
+    @Body() { title, content }: CreatePostDTO,
+  ): Promise<{ updated: number }> {
+    const result = await this.posts.update(title, content);
 
     if (result instanceof Error) {
-      throw new BadRequestException('Could not get posts', result.message);
+      throw new BadRequestException('Could not update post', result.message);
     }
 
-    return result;
+    const updated = result.rows.filter((r) => {
+      return r.get('[applied]');
+    }).length;
+
+    return { updated };
   }
 }

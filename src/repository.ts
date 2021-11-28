@@ -1,4 +1,5 @@
 import { Type } from '@nestjs/common';
+import { types } from 'cassandra-driver';
 import { catchError, defer, map, Observable, of } from 'rxjs';
 
 import {
@@ -6,6 +7,7 @@ import {
   FindQuery,
   FindQueryOptions,
   SaveOptions,
+  UpdateOptions,
 } from './interfaces/orm.interface';
 
 export class Repository<Entity> {
@@ -41,5 +43,18 @@ export class Repository<Entity> {
       ),
       catchError((error) => of(error)),
     );
+  }
+
+  update(
+    query: FindQuery<Entity>,
+    updateValue: Partial<Entity>,
+    options: UpdateOptions<Entity> = {},
+  ): Observable<types.ResultSet | Error> {
+    return defer(() =>
+      this.model.updateAsync(query, updateValue, {
+        ...{ if_exists: true },
+        ...options,
+      }),
+    ).pipe(catchError((error) => of(error)));
   }
 }

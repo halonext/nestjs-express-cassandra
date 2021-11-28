@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { types } from 'cassandra-driver';
 import { lastValueFrom } from 'rxjs';
 
 import { InjectRepository } from '../../decorators/inject-repository.decorator';
@@ -24,6 +25,20 @@ export class PostsService {
         title,
         content,
       }),
+    );
+  }
+
+  async update(
+    title: string,
+    content: string,
+  ): Promise<types.ResultSet | Error> {
+    return await lastValueFrom(
+      this.posts.update(
+        {
+          title,
+        },
+        { content },
+      ),
     );
   }
 }

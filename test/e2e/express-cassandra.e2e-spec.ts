@@ -25,11 +25,11 @@ describe('ExpressCassandraModule', () => {
     await app.init();
   });
 
-  it(`should return created entity`, () => {
+  it(`CREATE: should return created entity`, () => {
     return request(server).post('/posts').send(payload).expect(201, payload);
   });
 
-  it(`should throw 400 exception send post invalid body`, () => {
+  it(`CREATE: should throw 400 exception with invalid body`, () => {
     const invalid = { content: 'A NestJS module' };
 
     return request(server)
@@ -44,11 +44,11 @@ describe('ExpressCassandraModule', () => {
       });
   });
 
-  it(`should return list of posts`, () => {
+  it(`FIND: should return list of posts`, () => {
     return request(server).get('/posts').expect(200, [payload]);
   });
 
-  it(`should throw 400 exception when query wrong field`, () => {
+  it(`FIND: should throw 400 exception when query wrong field`, () => {
     return request(server)
       .get('/posts?content=foo')
       .then((res) => {
@@ -57,6 +57,30 @@ describe('ExpressCassandraModule', () => {
           message: 'Could not get posts',
         });
       });
+  });
+
+  it(`UPDATE: should return updated rows count`, () => {
+    const updated = {
+      title: 'Express Cassandra',
+      content: 'A NestJS module (v2)',
+    };
+
+    return request(server)
+      .put('/posts')
+      .send(updated)
+      .expect(200, { updated: 1 });
+  });
+
+  it(`UPDATE: should return 0 updated rows`, () => {
+    const updated = {
+      title: 'Express Cassandra 2',
+      content: 'A NestJS module (v2)',
+    };
+
+    return request(server)
+      .put('/posts')
+      .send(updated)
+      .expect(200, { updated: 0 });
   });
 
   afterAll(async () => {
