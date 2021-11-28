@@ -1,10 +1,8 @@
 import { Provider } from '@nestjs/common';
 
+import Connection from '../connection';
 import { DEFAULT_CONNECTION_NAME } from '../constants';
-import {
-  Connection,
-  ConnectionOptions,
-} from '../interfaces/connection.interface';
+import { ConnectionOptions } from '../interfaces/connection.interface';
 import { FunctionType } from '../interfaces/decorators.interface';
 import { loadModel } from './orm';
 
@@ -31,7 +29,7 @@ export default function createFeatureProviders(
   const providerModel = (entity: FunctionType) => ({
     provide: getModelProviderName(entity),
     useFactory: async (connection: Connection) => {
-      return loadModel(connection, entity);
+      return loadModel<typeof entity>(connection, entity);
     },
     inject: [getConnectionProviderName(connection)],
   });

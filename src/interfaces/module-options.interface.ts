@@ -1,7 +1,8 @@
 import { ModuleMetadata, Type } from '@nestjs/common';
 import { FactoryProvider } from '@nestjs/common/interfaces/modules/provider.interface';
 
-import { Connection, ConnectionOptions } from './connection.interface';
+import Connection from '../connection';
+import { ConnectionOptions } from './connection.interface';
 
 export interface ExpressCassandraModuleOptions extends ConnectionOptions {
   keepConnectionAlive?: boolean;

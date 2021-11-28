@@ -1,36 +1,48 @@
-import { Connection } from '../interfaces/connection.interface';
+import { Logger } from '@nestjs/common';
+
+import Connection from '../connection';
 import {
-  EntityOptions,
+  ColumnsType,
   ExtendedEntityOptions,
   FunctionType,
 } from '../interfaces/decorators.interface';
-import { getAttributes, getOptions } from './metadata';
+import { BaseModel } from '../interfaces/orm.interface';
+import { getEntityColumns, getEntityOptions } from './metadata';
 
-export async function loadModel(
+export async function loadModel<T>(
   connection: Connection,
   entity: FunctionType,
-): Promise<void> {
+): Promise<BaseModel<T>> {
   const schema = getSchema(entity);
   const modelName = schema.name || entity.name;
+  const model = connection.loadSchema(modelName, schema);
 
-  // const model = connection.loadSchema(modelName, schema);
-  //
-  // return new Promise((resolve) => {
-  //   model.syncDB((err) => {
-  //     if (err) {
-  //       Logger.error(err.message, err.stack, 'ExpressCassandraModule');
-  //       return resolve(model);
-  //     }
-  //     return resolve(model);
-  //   });
-  // });
+  return new Promise((resolve, reject) => {
+    model.syncDB((err) => {
+      if (err) {
+        Logger.error(err.message, 'ExpressCassandraModule');
+        return reject(model);
+      }
+
+      return resolve(model);
+    });
+  });
 }
 
 export function getSchema(
   entity: FunctionType,
-): EntityOptions & { fields: unknown } {
-  const attributes = getAttributes(entity.prototype);
-  const options = getOptions<ExtendedEntityOptions<object>>(entity.prototype);
+): ExtendedEntityOptions & { fields: ColumnsType } {
+  const fields = getEntityColumns(entity.prototype);
+  const options = getEntityOptions<ExtendedEntityOptions>(entity.prototype);
+  const modelName = options?.name || entity.name;
 
-  return { ...options, fields: attributes };
+  if (!options) {
+    throw new Error(`No entity options found for "${modelName}".`);
+  }
+
+  if (!fields) {
+    throw new Error(`No column options found for "${modelName}"..`);
+  }
+
+  return { ...options, fields };
 }

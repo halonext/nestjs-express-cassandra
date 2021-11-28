@@ -2,9 +2,9 @@ import {
   EntityOptions,
   ExtendedEntityOptions,
 } from '../interfaces/decorators.interface';
-import { addOptions, setEntityName } from '../utils/metadata';
+import { addEntityOptions, setEntityName } from '../utils/metadata';
 
-export function Entity<T = object>(options: EntityOptions<T>): ClassDecorator {
+export function Entity<T>(options: EntityOptions<T>): ClassDecorator {
   return (target): void => {
     const extended = {
       ...options,
@@ -15,6 +15,6 @@ export function Entity<T = object>(options: EntityOptions<T>): ClassDecorator {
     const entityName = options.name || target.name;
 
     setEntityName(target.prototype, entityName);
-    addOptions<ExtendedEntityOptions<T>>(target.prototype, extended);
+    addEntityOptions<ExtendedEntityOptions<T>>(target.prototype, extended);
   };
 }

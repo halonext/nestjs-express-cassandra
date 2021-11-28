@@ -8,6 +8,12 @@ import { PostsModule } from './posts/posts.module';
     ExpressCassandraModule.forRoot({
       clientOptions: {
         contactPoints: ['127.0.0.1'],
+        localDataCenter: 'datacenter1',
+        keyspace: 'sample_app',
+      },
+      ormOptions: {
+        migration: 'alter',
+        disableTTYConfirmation: true,
       },
     }),
     PostsModule,
