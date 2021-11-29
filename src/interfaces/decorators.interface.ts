@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 import { ColumnType } from './cassandra.interface';
 
 export interface EntityOptions<T = object> {
@@ -21,12 +23,10 @@ export interface ColumnRuleOptions {
   required?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type FunctionType = Function;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type ObjectType = Object;
 
-export type TargetType = typeof Function.prototype;
+export type TargetType = Object;
 
 export type ColumnsType = Record<string, ColumnOptions>;
