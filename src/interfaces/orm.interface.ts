@@ -18,12 +18,22 @@ export interface BaseModelStatic<T> {
   findAsync(
     query: FindQuery<T>,
     options?: FindQueryOptions<T>,
-  ): Promise<BaseModelStatic<T>[]>;
+  ): Promise<BaseModel<T>[]>;
+
+  findOneAsync(
+    query: FindQuery<T>,
+    options?: FindQueryOptions<T>,
+  ): Promise<BaseModel<T>>;
 
   updateAsync(
     query: FindQuery<T>,
     updateValue: Partial<T>,
     options?: UpdateOptions<T>,
+  ): Promise<types.ResultSet>;
+
+  deleteAsync(
+    query: FindQuery<T>,
+    options?: DeleteOptions,
   ): Promise<types.ResultSet>;
 }
 
@@ -71,6 +81,6 @@ export interface UpdateOptions<T> {
   conditions?: { [P in keyof T]?: T[P] };
 }
 
-export interface UpdateResult {
-  updated: number;
+export interface DeleteOptions {
+  if_exists?: boolean;
 }

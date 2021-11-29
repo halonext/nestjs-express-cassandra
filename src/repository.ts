@@ -4,6 +4,7 @@ import { catchError, defer, map, Observable, of } from 'rxjs';
 
 import {
   BaseModelStatic,
+  DeleteOptions,
   FindQuery,
   FindQueryOptions,
   SaveOptions,
@@ -45,6 +46,21 @@ export class Repository<Entity> {
     );
   }
 
+  findOne(
+    query: FindQuery<Entity>,
+    options: FindQueryOptions<Entity> = {},
+  ): Observable<Entity | Error> {
+    return defer(() =>
+      this.model.findOneAsync(query, {
+        ...{ raw: true },
+        ...options,
+      }),
+    ).pipe(
+      map((e) => e && Object.assign(new this.target(), e)),
+      catchError((error: Error) => of(error)),
+    );
+  }
+
   update(
     query: FindQuery<Entity>,
     updateValue: Partial<Entity>,
@@ -52,6 +68,18 @@ export class Repository<Entity> {
   ): Observable<types.ResultSet | Error> {
     return defer(() =>
       this.model.updateAsync(query, updateValue, {
+        ...{ if_exists: true },
+        ...options,
+      }),
+    ).pipe(catchError((error: Error) => of(error)));
+  }
+
+  delete(
+    query: FindQuery<Entity>,
+    options?: DeleteOptions,
+  ): Observable<types.ResultSet | Error> {
+    return defer(() =>
+      this.model.deleteAsync(query, {
         ...{ if_exists: true },
         ...options,
       }),

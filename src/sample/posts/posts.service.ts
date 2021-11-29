@@ -19,9 +19,16 @@ export class PostsService {
     return await lastValueFrom(this.posts.find(query));
   }
 
+  async findOne(postId: string): Promise<PostEntity | Error> {
+    return await lastValueFrom(
+      this.posts.findOne({ postId: parseInt(postId) }),
+    );
+  }
+
   async create(title: string, content: string): Promise<PostEntity | Error> {
     return await lastValueFrom(
       this.posts.save({
+        postId: 1,
         title,
         content,
       }),
@@ -29,16 +36,25 @@ export class PostsService {
   }
 
   async update(
+    postId: string,
     title: string,
     content: string,
   ): Promise<types.ResultSet | Error> {
     return await lastValueFrom(
       this.posts.update(
         {
-          title,
+          postId: parseInt(postId),
         },
         { content },
       ),
+    );
+  }
+
+  async delete(postId: string): Promise<types.ResultSet | Error> {
+    return await lastValueFrom(
+      this.posts.delete({
+        postId: parseInt(postId),
+      }),
     );
   }
 }

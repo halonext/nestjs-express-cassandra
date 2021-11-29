@@ -2,7 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Put,
   Query,
@@ -31,6 +33,17 @@ export class PostsController {
     return result;
   }
 
+  @Get('/posts/:id')
+  async findOne(@Param('id') postId: string): Promise<PostEntity> {
+    const result = await this.posts.findOne(postId);
+
+    if (result instanceof Error) {
+      throw new BadRequestException('Could not get posts', result.message);
+    }
+
+    return result;
+  }
+
   @Post('/posts')
   async create(@Body() { title, content }: CreatePostDTO): Promise<PostEntity> {
     const result = await this.posts.create(title, content);
@@ -42,13 +55,15 @@ export class PostsController {
     return result;
   }
 
-  @Put('/posts')
+  @Put('/posts/:id')
   async update(
+    @Param('id') postId: string,
     @Body() { title, content }: CreatePostDTO,
   ): Promise<{ updated: number }> {
-    const result = await this.posts.update(title, content);
+    const result = await this.posts.update(postId, title, content);
 
     if (result instanceof Error) {
+      console.log(result);
       throw new BadRequestException('Could not update post', result.message);
     }
 
@@ -57,5 +72,16 @@ export class PostsController {
     }).length;
 
     return { updated };
+  }
+
+  @Delete('/posts/:id')
+  async delete(@Param('id') postId: string): Promise<{ deleted: boolean }> {
+    const result = await this.posts.delete(postId);
+
+    if (result instanceof Error) {
+      throw new BadRequestException('Could not delete post', result.message);
+    }
+
+    return { deleted: true };
   }
 }

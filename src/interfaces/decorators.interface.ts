@@ -4,6 +4,7 @@ export interface EntityOptions<T = object> {
   name?: string;
   table_name?: string;
   key: Array<keyof T | Array<keyof T>>;
+  indexes?: Array<keyof T> | string[];
 }
 
 export interface ExtendedEntityOptions<T = object> extends EntityOptions<T> {
@@ -13,6 +14,11 @@ export interface ExtendedEntityOptions<T = object> extends EntityOptions<T> {
 
 export interface ColumnOptions {
   type?: ColumnType;
+  rule?: ColumnRuleOptions;
+}
+
+export interface ColumnRuleOptions {
+  required?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types

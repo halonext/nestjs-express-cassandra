@@ -12,7 +12,7 @@ import { PostsModule } from './posts/posts.module';
         keyspace: 'sample_app',
       },
       ormOptions: {
-        migration: 'alter',
+        migration: 'drop',
         disableTTYConfirmation: true,
       },
     }),
