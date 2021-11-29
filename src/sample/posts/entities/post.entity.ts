@@ -1,5 +1,9 @@
 import { Column } from '../../../decorators/column.decorator';
-import { Entity, VersionColumn } from '../../../decorators/entity.decorator';
+import {
+  CreateDateColumn,
+  Entity,
+  UpdateDateColumn,
+} from '../../../decorators/entity.decorator';
 
 @Entity<PostEntity>({
   key: ['postId'],
@@ -21,6 +25,9 @@ export class PostEntity {
   })
   content?: string;
 
-  @VersionColumn()
-  version?: string;
+  @CreateDateColumn()
+  createdAt?: string;
+
+  @UpdateDateColumn()
+  updatedAt?: string;
 }
