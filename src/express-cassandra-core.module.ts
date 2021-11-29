@@ -68,18 +68,26 @@ export class ExpressCassandraCoreModule implements OnModuleDestroy {
   static forRootAsync(
     options: ExpressCassandraModuleAsyncOptions,
   ): DynamicModule {
+    const connectionProvider = {
+      provide: getConnectionProviderName(options),
+      useFactory: async (typeormOptions: ExpressCassandraModuleOptions) => {
+        return await createNewConnection(typeormOptions);
+      },
+      inject: [EXPRESS_CASSANDRA_MODULE_OPTIONS],
+    };
     const asyncProviders = this.createAsyncProviders(options);
     return {
       module: ExpressCassandraCoreModule,
       imports: options.imports,
       providers: [
+        connectionProvider,
         ...asyncProviders,
         {
           provide: EXPRESS_CASSANDRA_MODULE_ID,
           useValue: nanoid(),
         },
       ],
-      exports: [],
+      exports: [connectionProvider],
     };
   }
 
@@ -119,7 +127,9 @@ export class ExpressCassandraCoreModule implements OnModuleDestroy {
     return {
       provide: EXPRESS_CASSANDRA_MODULE_OPTIONS,
       useFactory: async (optionsFactory) =>
-        await optionsFactory.createExpressCassandraOptions(options.name),
+        optionsFactory
+          ? await optionsFactory.createExpressCassandraOptions(options.name)
+          : null,
       inject,
     };
   }

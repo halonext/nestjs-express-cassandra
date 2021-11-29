@@ -29,6 +29,21 @@ export class Repository<Entity> {
     }).pipe(catchError((error: Error) => of(error)));
   }
 
+  bulkSave(
+    entities: Entity[],
+    options: SaveOptions = {},
+  ): Observable<Entity[] | Error> {
+    return defer(async () => {
+      return await Promise.all(
+        entities.map(async (entity) => {
+          const model = new this.model(entity);
+          await model.saveAsync(options);
+          return Object.assign(new this.target(), model.toJSON());
+        }),
+      );
+    }).pipe(catchError((error: Error) => of(error)));
+  }
+
   find(
     query: FindQuery<Entity>,
     options: FindQueryOptions<Entity> = {},

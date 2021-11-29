@@ -5,7 +5,7 @@ import * as request from 'supertest';
 
 import { SampleModule } from '../../src/sample/sample.module';
 
-describe('ExpressCassandraModule', () => {
+describe('SyncModule', () => {
   let server: Server;
   let app: INestApplication;
 

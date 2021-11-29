@@ -6,7 +6,17 @@ import { Entity } from '../../../decorators/entity.decorator';
 })
 export class PhotoEntity {
   @Column({
+    type: 'int',
+  })
+  photoId!: number;
+
+  @Column({
     type: 'text',
   })
-  photoId!: string;
+  authorId!: string;
+
+  @Column({
+    type: 'int',
+  })
+  categoryId!: number;
 }

@@ -4,6 +4,7 @@ import Connection from '../connection';
 import { DEFAULT_CONNECTION_NAME } from '../constants';
 import { ConnectionOptions } from '../interfaces/connection.interface';
 import { FunctionType } from '../interfaces/decorators.interface';
+import { ExpressCassandraModuleAsyncOptions } from '../interfaces/module-options.interface';
 import { BaseModel } from '../interfaces/orm.interface';
 import { Repository } from '../repository';
 import { createRepository, loadSchema } from './orm';
@@ -13,7 +14,10 @@ export function getModelProviderName(entity: FunctionType): string {
 }
 
 export function getConnectionProviderName(
-  connection: ConnectionOptions | string = DEFAULT_CONNECTION_NAME,
+  connection:
+    | ConnectionOptions
+    | ExpressCassandraModuleAsyncOptions
+    | string = DEFAULT_CONNECTION_NAME,
 ): string {
   return DEFAULT_CONNECTION_NAME === connection
     ? DEFAULT_CONNECTION_NAME
