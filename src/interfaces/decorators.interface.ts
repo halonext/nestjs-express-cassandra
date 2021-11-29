@@ -16,6 +16,7 @@ export interface ExtendedEntityOptions<T = object> extends EntityOptions<T> {
 
 export interface ColumnOptions {
   type?: ColumnType;
+  default?: string | (() => string) | Function | { $db_function: string };
   rule?: ColumnRuleOptions;
 }
 

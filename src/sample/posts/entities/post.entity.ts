@@ -1,9 +1,12 @@
-import { Column } from '../../../decorators/column.decorator';
 import {
+  Column,
   CreateDateColumn,
-  Entity,
+  TimeUUIDColumn,
   UpdateDateColumn,
-} from '../../../decorators/entity.decorator';
+  UUIDColumn,
+  VersionColumn,
+} from '../../../decorators/column.decorator';
+import { Entity } from '../../../decorators/entity.decorator';
 
 @Entity<PostEntity>({
   key: ['postId'],
@@ -13,6 +16,15 @@ export class PostEntity {
     type: 'int',
   })
   postId!: number;
+
+  @UUIDColumn()
+  userId?: string;
+
+  @TimeUUIDColumn()
+  dateID?: string;
+
+  @VersionColumn()
+  version?: string;
 
   @Column({
     type: 'text',
