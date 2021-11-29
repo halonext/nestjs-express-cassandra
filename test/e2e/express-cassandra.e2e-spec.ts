@@ -101,9 +101,9 @@ describe('ExpressCassandraModule', () => {
       .expect(200, { updated: 0 });
   });
 
-  // it(`DELETE: should delete post`, () => {
-  //   return request(server).delete('/posts/1').expect(200, { deleted: true });
-  // });
+  it(`DELETE: should delete post`, () => {
+    return request(server).delete('/posts/1').expect(200, { deleted: true });
+  });
 
   afterAll(async () => {
     await app.close();
