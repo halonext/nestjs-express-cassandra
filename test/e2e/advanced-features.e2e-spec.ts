@@ -4,36 +4,54 @@ import { Server } from 'http';
 import * as request from 'supertest';
 
 import { FeaturesModule } from '../../src/sample/features.module';
+import { PhotoEntity } from '../../src/sample/posts/entities/photo.entity';
 
 describe('Advanced Query & Operators', () => {
   let server: Server;
   let app: INestApplication;
 
-  const payload = [
+  const payload: PhotoEntity[] = [
     {
+      workspaceId: 0,
+      channelId: 1,
+      bucketId: 1,
       photoId: 1,
-      authorId: '1',
-      categoryId: 1,
     },
     {
+      workspaceId: 0,
+      channelId: 1,
+      bucketId: 1,
       photoId: 2,
-      authorId: '2',
-      categoryId: 2,
     },
     {
+      workspaceId: 0,
+      channelId: 1,
+      bucketId: 2,
       photoId: 3,
-      authorId: '2',
-      categoryId: 2,
     },
     {
+      workspaceId: 0,
+      channelId: 1,
+      bucketId: 2,
       photoId: 4,
-      authorId: '3',
-      categoryId: 3,
     },
     {
+      workspaceId: 0,
+      channelId: 1,
+      bucketId: 3,
       photoId: 5,
-      authorId: '3',
-      categoryId: 3,
+    },
+    {
+      workspaceId: 1,
+      channelId: 2,
+      bucketId: 3,
+      photoId: 6,
+    },
+    {
+      workspaceId: 1,
+      channelId: 2,
+      bucketId: 3,
+      photoId: 7,
     },
   ];
 
@@ -59,20 +77,25 @@ describe('Advanced Query & Operators', () => {
 
   it(`$IN: should return matched entities`, () => {
     return request(server)
-      .get('/photos')
+      .get('/photos?workspaceIds=0,1')
       .then((res) => {
-        expect(res.body).toMatchObject([
-          {
-            photoId: 2,
-            authorId: '2',
-            categoryId: 2,
-          },
-          {
-            photoId: 4,
-            authorId: '3',
-            categoryId: 3,
-          },
-        ]);
+        expect(res.body).toMatchObject(payload.slice(0, 5));
+      });
+  });
+
+  it(`$GT: should return greater entities`, () => {
+    return request(server)
+      .get('/query?type=from&id=3')
+      .then((res) => {
+        expect(res.body).toMatchObject(payload.slice(3, 5));
+      });
+  });
+
+  it(`$LT: should return smaller entities`, () => {
+    return request(server)
+      .get('/query?type=to&id=3')
+      .then((res) => {
+        expect(res.body).toMatchObject(payload.slice(0, 2));
       });
   });
 
