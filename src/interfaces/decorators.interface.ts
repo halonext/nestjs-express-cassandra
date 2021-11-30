@@ -16,6 +16,13 @@ export interface EntityOptions<T = object> {
   indexes?: Array<keyof T> | string[];
   clustering_order?: ClusterOrder<T>;
   materialized_views?: Record<string, MaterializeViewOptions<T>>;
+  options?: {
+    timestamps?: {
+      createdAt?: string;
+      updatedAt?: string;
+    };
+    versions?: { key: string };
+  };
 }
 
 export interface ExtendedEntityOptions<T = object> extends EntityOptions<T> {
