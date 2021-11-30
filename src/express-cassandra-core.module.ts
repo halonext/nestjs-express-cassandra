@@ -1,34 +1,51 @@
 import {
   DynamicModule,
+  Global,
   Inject,
   Logger,
   Module,
+  OnModuleDestroy,
   Provider,
 } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { nanoid } from 'nanoid';
-import { defer, lastValueFrom, map } from 'rxjs';
 
+import Connection from './connection';
 import {
   EXPRESS_CASSANDRA_MODULE_ID,
   EXPRESS_CASSANDRA_MODULE_OPTIONS,
 } from './constants';
 import { ExpressCassandraModule } from './express-cassandra.module';
-import ExpressCassandraClient from './express-cassandra-client';
-import { Connection } from './interfaces/connection.interface';
 import {
   ExpressCassandraModuleAsyncOptions,
   ExpressCassandraModuleOptions,
 } from './interfaces/module-options.interface';
-import getConnectionName from './utils/get-connection-name';
+import { createNewConnection } from './utils/connection';
+import { getConnectionProviderName } from './utils/providers';
 
+@Global()
 @Module({})
-export class ExpressCassandraCoreModule {
+export class ExpressCassandraCoreModule implements OnModuleDestroy {
   private readonly logger = new Logger(ExpressCassandraModule.name);
 
   constructor(
     @Inject(EXPRESS_CASSANDRA_MODULE_OPTIONS)
     private readonly options: ExpressCassandraModuleOptions,
+    private readonly moduleRef: ModuleRef,
   ) {}
+
+  async onModuleDestroy(): Promise<void> {
+    if (this.options.keepConnectionAlive) {
+      return;
+    }
+    const connection = this.moduleRef.get<Connection>(
+      getConnectionProviderName(this.options),
+    );
+    if (connection) {
+      await connection.closeAsync();
+      this.logger.log(`[${connection.name}] Connection closed`);
+    }
+  }
 
   static forRoot(options: ExpressCassandraModuleOptions): DynamicModule {
     const moduleOptions = {
@@ -37,8 +54,8 @@ export class ExpressCassandraCoreModule {
     };
 
     const connectionProvider = {
-      provide: getConnectionName(options),
-      useFactory: async () => await this.createConnectionFactory(options),
+      provide: getConnectionProviderName(options),
+      useFactory: async () => await createNewConnection(options),
     };
 
     return {
@@ -51,18 +68,26 @@ export class ExpressCassandraCoreModule {
   static forRootAsync(
     options: ExpressCassandraModuleAsyncOptions,
   ): DynamicModule {
+    const connectionProvider = {
+      provide: getConnectionProviderName(options),
+      useFactory: async (typeormOptions: ExpressCassandraModuleOptions) => {
+        return await createNewConnection(typeormOptions);
+      },
+      inject: [EXPRESS_CASSANDRA_MODULE_OPTIONS],
+    };
     const asyncProviders = this.createAsyncProviders(options);
     return {
       module: ExpressCassandraCoreModule,
       imports: options.imports,
       providers: [
+        connectionProvider,
         ...asyncProviders,
         {
           provide: EXPRESS_CASSANDRA_MODULE_ID,
           useValue: nanoid(),
         },
       ],
-      exports: [],
+      exports: [connectionProvider],
     };
   }
 
@@ -102,19 +127,10 @@ export class ExpressCassandraCoreModule {
     return {
       provide: EXPRESS_CASSANDRA_MODULE_OPTIONS,
       useFactory: async (optionsFactory) =>
-        await optionsFactory.createExpressCassandraOptions(options.name),
+        optionsFactory
+          ? await optionsFactory.createExpressCassandraOptions(options.name)
+          : null,
       inject,
     };
-  }
-
-  private static async createConnectionFactory(
-    options: ExpressCassandraModuleOptions,
-  ): Promise<Connection> {
-    const { ...cassandraOptions } = options;
-    const connection = new ExpressCassandraClient(cassandraOptions);
-
-    return await lastValueFrom(
-      defer(() => connection.initAsync()).pipe(map(() => connection)),
-    );
   }
 }

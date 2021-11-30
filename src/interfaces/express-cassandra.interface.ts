@@ -1,4 +1,10 @@
-import { ClientOptions } from 'cassandra-driver';
+import { ClientOptions as DriverOptions } from 'cassandra-driver';
+
+interface ClientOptions extends DriverOptions {
+  contactPoints: string[];
+  localDataCenter: string;
+  keyspace: string;
+}
 
 /**
  * Replication Strategy

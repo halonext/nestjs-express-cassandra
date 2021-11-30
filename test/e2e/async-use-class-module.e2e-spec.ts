@@ -3,15 +3,21 @@ import { Test } from '@nestjs/testing';
 import { Server } from 'http';
 import * as request from 'supertest';
 
-import { SampleModule } from '../../src/sample/sample.module';
+import { AsyncUseClassModule } from '../../src/sample/async-use-class.module';
 
-describe('ExpressCassandraModule', () => {
+describe('AsyncModule - useClass', () => {
   let server: Server;
   let app: INestApplication;
 
-  beforeEach(async () => {
+  const payload = {
+    postId: 1,
+    title: 'Express Cassandra',
+    content: 'A NestJS module',
+  };
+
+  beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [SampleModule],
+      imports: [AsyncUseClassModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -20,13 +26,16 @@ describe('ExpressCassandraModule', () => {
     await app.init();
   });
 
-  it(`should return created entity`, () => {
+  it(`CREATE: should return created entity`, () => {
     return request(server)
       .post('/posts')
-      .expect(201, { title: 'Express Cassandra', body: 'A NestJS module' });
+      .send(payload)
+      .then((res) => {
+        expect(res.body).toMatchObject(payload);
+      });
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close();
   });
 });

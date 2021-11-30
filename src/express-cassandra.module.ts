@@ -1,10 +1,12 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Module, Type } from '@nestjs/common';
 
+import { DEFAULT_CONNECTION_NAME } from './constants';
 import { ExpressCassandraCoreModule } from './express-cassandra-core.module';
 import {
   ExpressCassandraModuleAsyncOptions,
   ExpressCassandraModuleOptions,
 } from './interfaces/module-options.interface';
+import createFeatureProviders from './utils/providers';
 
 @Module({})
 export class ExpressCassandraModule {
@@ -21,6 +23,18 @@ export class ExpressCassandraModule {
     return {
       module: ExpressCassandraModule,
       imports: [ExpressCassandraCoreModule.forRootAsync(options)],
+    };
+  }
+
+  static forFeature(
+    entities: Type[] = [],
+    connection = DEFAULT_CONNECTION_NAME,
+  ): DynamicModule {
+    const providers = createFeatureProviders(entities, connection);
+    return {
+      module: ExpressCassandraModule,
+      providers: providers,
+      exports: providers,
     };
   }
 }
