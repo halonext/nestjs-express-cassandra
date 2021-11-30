@@ -3,9 +3,9 @@ import { Test } from '@nestjs/testing';
 import { Server } from 'http';
 import * as request from 'supertest';
 
-import { AsyncModule } from '../../src/sample/async.module';
+import { AsyncUseExistingModule } from '../../src/sample/async-use-existing.module';
 
-describe('AsyncModule - useFactory', () => {
+describe('AsyncModule - useClass', () => {
   let server: Server;
   let app: INestApplication;
 
@@ -17,7 +17,7 @@ describe('AsyncModule - useFactory', () => {
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [AsyncModule],
+      imports: [AsyncUseExistingModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

@@ -21,4 +21,4 @@ import { PostsModule } from './posts/posts.module';
     PostsModule,
   ],
 })
-export class SampleAsyncModule {}
+export class AsyncModule {}

@@ -19,4 +19,4 @@ import { PostsModule } from './posts/posts.module';
     PostsModule,
   ],
 })
-export class SampleModule {}
+export class FeaturesModule {}
