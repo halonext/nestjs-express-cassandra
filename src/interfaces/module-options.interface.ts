@@ -24,8 +24,8 @@ export interface ExpressCassandraModuleAsyncOptions
   name?: string;
   useExisting?: Type<ExpressCassandraOptionsFactory>;
   useClass?: Type<ExpressCassandraOptionsFactory>;
-  useFactory?: (
-    ...args: unknown[]
+  useFactory: (
+    ...args: never[]
   ) => Promise<ExpressCassandraModuleOptions> | ExpressCassandraModuleOptions;
   connectionFactory?: ExpressCassandraConnectionFactory;
 }
