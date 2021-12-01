@@ -1,5 +1,5 @@
 {
-  "name": "@halonext/nestjs-express-cassandra",
+  "name": "nestjs-express-cassandra",
   "version": "0.0.1",
   "description": "Express-cassandra module for Nest framework",
   "main": "dist/index.js",
