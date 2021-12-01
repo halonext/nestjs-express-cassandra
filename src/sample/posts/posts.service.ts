@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { types } from 'cassandra-driver';
 import { lastValueFrom } from 'rxjs';
 
+import { BaseRepository } from '../../base-repository';
 import { InjectRepository } from '../../decorators/inject-repository.decorator';
-import { Repository } from '../../repository';
 import { PostEntity } from './entities/post.entity';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(PostEntity)
-    private readonly posts: Repository<PostEntity>,
+    private readonly posts: BaseRepository<PostEntity>,
   ) {}
 
   async find(

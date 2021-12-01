@@ -11,7 +11,7 @@ import {
   UpdateOptions,
 } from './interfaces/orm.interface';
 
-export class Repository<Entity> {
+export class BaseRepository<Entity> {
   constructor(
     private readonly model: BaseModelStatic<Entity>,
     private readonly target: Type<Entity>,

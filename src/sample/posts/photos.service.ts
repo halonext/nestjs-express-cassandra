@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 
+import { BaseRepository } from '../../base-repository';
 import { InjectRepository } from '../../decorators/inject-repository.decorator';
-import { Repository } from '../../repository';
 import { PhotoEntity } from './entities/photo.entity';
 import { CreatePhotoDTO } from './photos.controller';
 
@@ -10,7 +10,7 @@ import { CreatePhotoDTO } from './photos.controller';
 export class PhotosService {
   constructor(
     @InjectRepository(PhotoEntity)
-    private readonly posts: Repository<PhotoEntity>,
+    private readonly posts: BaseRepository<PhotoEntity>,
   ) {}
 
   async findByIds(workspaceIds: number[]): Promise<PhotoEntity[] | Error> {

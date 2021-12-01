@@ -1,5 +1,6 @@
 import { Logger, Type } from '@nestjs/common';
 
+import { BaseRepository } from '../base-repository';
 import Connection from '../connection';
 import {
   ColumnsType,
@@ -7,7 +8,6 @@ import {
   FunctionType,
 } from '../interfaces/decorators.interface';
 import { BaseModel, BaseModelStatic } from '../interfaces/orm.interface';
-import { Repository } from '../repository';
 import { getEntityColumns, getEntityOptions } from './metadata';
 
 export async function loadSchema<T>(
@@ -51,7 +51,7 @@ export function getSchema(
 export function createRepository<T>(
   entity: Type<T>,
   model: BaseModel<T>,
-  constructor = Repository,
-): Repository<T> {
+  constructor = BaseRepository,
+): BaseRepository<T> {
   return new constructor(model, entity);
 }

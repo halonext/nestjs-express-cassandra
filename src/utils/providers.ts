@@ -1,12 +1,12 @@
 import { Provider, Type } from '@nestjs/common';
 
+import { BaseRepository } from '../base-repository';
 import Connection from '../connection';
 import { DEFAULT_CONNECTION_NAME } from '../constants';
 import { ConnectionOptions } from '../interfaces/connection.interface';
 import { FunctionType } from '../interfaces/decorators.interface';
 import { ExpressCassandraModuleAsyncOptions } from '../interfaces/module-options.interface';
 import { BaseModel } from '../interfaces/orm.interface';
-import { Repository } from '../repository';
 import { createRepository, loadSchema } from './orm';
 
 export function getModelProviderName(entity: FunctionType): string {
@@ -29,7 +29,7 @@ export function getConnectionProviderName(
 }
 
 export function getRepositoryProviderName(entity: FunctionType): string {
-  if (entity.prototype instanceof Repository) {
+  if (entity.prototype instanceof BaseRepository) {
     return entity.name;
   }
   return `${entity.name}Repository`;
