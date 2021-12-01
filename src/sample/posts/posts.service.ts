@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { types } from 'cassandra-driver';
 import { lastValueFrom } from 'rxjs';
 
-import { BaseRepository } from '../../base-repository';
 import { InjectRepository } from '../../decorators/inject-repository.decorator';
 import { PostEntity } from './entities/post.entity';
+import { PostsRepository } from './repositories/posts.repository';
 
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectRepository(PostEntity)
-    private readonly posts: BaseRepository<PostEntity>,
+    @InjectRepository(PostsRepository)
+    private readonly posts: PostsRepository,
   ) {}
 
   async find(
@@ -26,13 +26,7 @@ export class PostsService {
   }
 
   async create(title: string, content: string): Promise<PostEntity | Error> {
-    return await lastValueFrom(
-      this.posts.save({
-        postId: 1,
-        title,
-        content,
-      }),
-    );
+    return await this.posts.createPost(title, content);
   }
 
   async update(

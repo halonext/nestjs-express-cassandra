@@ -11,11 +11,10 @@ import {
   UpdateOptions,
 } from './interfaces/orm.interface';
 
-export class BaseRepository<Entity> {
-  constructor(
-    private readonly model: BaseModelStatic<Entity>,
-    private readonly target: Type<Entity>,
-  ) {}
+export class BaseRepository<Entity> extends Function {
+  model!: BaseModelStatic<Entity>;
+
+  target!: Type<Entity>;
 
   create(entity: Entity): Entity {
     return Object.assign(new this.target(), entity);

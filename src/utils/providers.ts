@@ -7,6 +7,7 @@ import { ConnectionOptions } from '../interfaces/connection.interface';
 import { FunctionType } from '../interfaces/decorators.interface';
 import { ExpressCassandraModuleAsyncOptions } from '../interfaces/module-options.interface';
 import { BaseModel } from '../interfaces/orm.interface';
+import { getEntityMetadata } from './metadata';
 import { createRepository, loadSchema } from './orm';
 
 export function getModelProviderName(entity: FunctionType): string {
@@ -28,7 +29,7 @@ export function getConnectionProviderName(
     : `${connection.name}Connection`;
 }
 
-export function getRepositoryProviderName(entity: FunctionType): string {
+export function getRepositoryProviderName<T>(entity: Type<T>): string {
   if (entity.prototype instanceof BaseRepository) {
     return entity.name;
   }
@@ -54,22 +55,26 @@ export default function createFeatureProviders<T>(
     inject: [getModelProviderName(entity)],
   });
 
-  // const provideCustomRepository = EntityRepository => {
-  //   const entity = getEntity(EntityRepository);
-  //   return {
-  //     provide: getRepositoryToken(EntityRepository),
-  //     useFactory: async model =>
-  //       RepositoryFactory.create(entity, model, EntityRepository),
-  //     inject: [getModelToken(entity)],
-  //   };
-  // };
+  const createCustomRepositoryProvider = (repository: Type<T>) => {
+    const entity = getEntityMetadata<T>(repository.prototype);
+    return {
+      provide: getRepositoryProviderName(repository),
+      useFactory: async (model: BaseModel<T>) =>
+        createRepository<T>(entity, model, repository),
+      inject: [getModelProviderName(entity)],
+    };
+  };
 
   const providers: Provider[] = [];
   entities.forEach((entity) => {
-    providers.push(
-      createModelProvider(entity),
-      createRepositoryProvider(entity),
-    );
+    if (entity.prototype instanceof BaseRepository) {
+      providers.push(createCustomRepositoryProvider(entity));
+    } else {
+      providers.push(
+        createModelProvider(entity),
+        createRepositoryProvider(entity),
+      );
+    }
   });
 
   return providers;

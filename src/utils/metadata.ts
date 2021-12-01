@@ -1,3 +1,4 @@
+import { Type } from '@nestjs/common';
 import { merge } from 'lodash';
 
 import {
@@ -21,7 +22,7 @@ export function setEntityMetadata(
   Reflect.defineMetadata(ENTITY_METADATA_KEY, entity, target);
 }
 
-export function getEntityMetadata(target: TargetType): FunctionType {
+export function getEntityMetadata<T>(target: TargetType): Type<T> {
   return Reflect.getMetadata(ENTITY_METADATA_KEY, target);
 }
 

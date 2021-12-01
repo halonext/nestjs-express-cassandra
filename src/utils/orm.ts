@@ -51,7 +51,9 @@ export function getSchema(
 export function createRepository<T>(
   entity: Type<T>,
   model: BaseModel<T>,
-  constructor = BaseRepository,
-): BaseRepository<T> {
-  return new constructor(model, entity);
+  constructor: Type = BaseRepository,
+): T {
+  const repository = new constructor();
+  Object.assign(repository, { model, target: entity });
+  return repository;
 }

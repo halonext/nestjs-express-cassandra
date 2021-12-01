@@ -1,5 +1,10 @@
+import { BaseRepository } from '../../../base-repository';
 import { Repository } from '../../../decorators/repository.decorator';
-import { PostEntity } from '../entities/post.entity';
+import { PhotoEntity } from '../entities/photo.entity';
 
-@Repository(PostEntity)
-export class PhotosRepository {}
+@Repository(PhotoEntity)
+export class PhotosRepository extends BaseRepository<PhotoEntity> {
+  constructor() {
+    super();
+  }
+}
