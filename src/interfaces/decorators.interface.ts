@@ -39,6 +39,7 @@ export interface MaterializeViewOptions<T> {
 
 export interface ColumnOptions {
   type?: ColumnType;
+  typeDef?: string;
   default?: string | (() => string) | Function | { $db_function: string };
   rule?: ColumnRuleOptions;
 }
