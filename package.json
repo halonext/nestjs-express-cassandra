@@ -1,8 +1,16 @@
 {
   "name": "nestjs-express-cassandra",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Express-cassandra module for Nest framework",
-  "keywords": ["nestjs", "cassandra", "apache-cassandra", "orm", "express-cassandra", "typescript", "nodejs"],
+  "keywords": [
+    "nestjs",
+    "cassandra",
+    "apache-cassandra",
+    "orm",
+    "express-cassandra",
+    "typescript",
+    "nodejs"
+  ],
   "main": "dist/index.js",
   "scripts": {
     "build": "rimraf ./dist && tsc -p tsconfig.build.json",
